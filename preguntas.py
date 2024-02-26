@@ -24,7 +24,6 @@ def pregunta_01():
     """
     return len(tbl0)
 
-# print(pregunta_01())
 
 def pregunta_02():
     """
@@ -35,8 +34,6 @@ def pregunta_02():
 
     """
     return len(tbl0.columns)
-
-# print(pregunta_02())
 
 
 def pregunta_03():
@@ -56,8 +53,6 @@ def pregunta_03():
     registros = tbl0.groupby("_c1").size()
     return registros
 
-# print(pregunta_03())
-
 
 def pregunta_04():
     """
@@ -73,8 +68,6 @@ def pregunta_04():
     """
     promedio = tbl0.groupby("_c1")["_c2"].mean()
     return promedio
-
-# print(pregunta_04())
 
 
 def pregunta_05():
@@ -94,7 +87,6 @@ def pregunta_05():
     maximos = tbl0.groupby("_c1")["_c2"].max()
     return maximos
 
-# print(pregunta_05())
 
 def pregunta_06():
     """
@@ -108,7 +100,6 @@ def pregunta_06():
     valores = tbl1["_c4"].str.upper().unique()
     return sorted(valores)
 
-# print(pregunta_06())
 
 def pregunta_07():
     """
@@ -125,8 +116,6 @@ def pregunta_07():
     """
     suma = tbl0.groupby("_c1")["_c2"].sum()
     return suma
-
-# print(pregunta_07())
 
 
 def pregunta_08():
@@ -149,7 +138,6 @@ def pregunta_08():
     tbl08["suma"] = tbl08["_c0"] + tbl08["_c2"]
     return tbl08
 
-# print(pregunta_08())
 
 def pregunta_09():
     """
@@ -171,7 +159,6 @@ def pregunta_09():
     tbl09["year"] = tbl09["_c3"].str.split("-").str[0]
     return tbl09
 
-# print(pregunta_09())
 
 def pregunta_10():
     """
@@ -188,7 +175,9 @@ def pregunta_10():
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
 
-    return
+    # Agrupar por _c1 y concatenar en orden los valores de _c2
+    tabla = tbl0.groupby("_c1")["_c2"].apply(lambda x: ":".join(sorted(x.astype(str)))).reset_index()
+    return tabla
 
 
 def pregunta_11():
@@ -207,7 +196,8 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    tabla = tbl1.groupby("_c0")["_c4"].apply(lambda x: ",".join(sorted(x))).reset_index()
+    return tabla
 
 
 def pregunta_12():
@@ -225,7 +215,18 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+    def concatenar_columnas(group):
+        # función a aplicar a cada grupo para concatenar las columnas _c5a y _c5b
+        
+        _c5a = group["_c5a"].values
+        _c5b = group["_c5b"].values
+        
+        agrupacion = [f"{a}:{b}" for a, b in zip(_c5a, _c5b)]
+        agrupacion = ",".join(sorted(agrupacion))
+        return pd.Series({'_c5' : agrupacion})
+
+    tabla = tbl2.groupby("_c0").apply(concatenar_columnas, include_groups = False).reset_index()
+    return tabla
 
 
 def pregunta_13():
@@ -242,4 +243,7 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    # Unir las tablas tbl0 y tbl2 por la columna _c0 y agrupar por _c1
+    suma = pd.merge(tbl0, tbl2, on="_c0").groupby("_c1")["_c5b"].sum()
+    return suma
+
