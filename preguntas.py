@@ -177,7 +177,7 @@ def pregunta_10():
     """
 
     # Agrupar por _c1 y concatenar en orden los valores de _c2
-    tabla = tbl0.groupby("_c1")["_c2"].apply(lambda x: ":".join(sorted(x.astype(str)))).reset_index()
+    tabla = tbl0.pivot_table(index="_c1", values="_c2", aggfunc = lambda x: ":".join(sorted(x.astype(str))))
     return tabla
 
 
